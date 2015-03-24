@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 from itertools import ifilter
+from difflib import Differ
+from pprint import pprint
 
 
 ROOT='___root___'
@@ -16,10 +19,16 @@ class Node(object):
     def addChild(self, child):
         self.children.append(child)
 
-    def __str__(self):
-        return self.dumps('', '}')
+    def compareStr(self, indent=''):
+        res = '{0}{1}({2})\n'.format(indent, self.name, self.nodetype)
+        for child in sorted(self.children, key=lambda n:n.name):
+            res += child.compareStr(indent + '    ')
+        return res
 
-    def dumps(self, indent, end):
+    def __str__(self):
+        return self.dumps()
+
+    def dumps(self, indent='', end='}'):
         indent2 = indent + '    '
         res = '\n' + indent + '{\n' + indent2 + '"class": "%s",\n' % self.__class__.__name__
         res += indent2 + '"id": "@0x%X",\n' % id(self)
@@ -33,9 +42,9 @@ class Node(object):
             res += indent2 + '"children": ['
             for child in self.children:
                 if child is self.children[-1]:
-                    res += child.dumps(indent2, '}]')
+                    res += child.dumps(indent=indent2, end='}]')
                 else:
-                    res += child.dumps(indent2, '},')
+                    res += child.dumps(indent=indent2, end='},')
             res += '\n' + indent + end
         else:
             res += indent2 + '"children": []\n' + indent + end
@@ -95,7 +104,7 @@ def createNodeParser(line):
     return (name, parent, nodetype)
 
 
-def buildNodeTree(path):
+def buildNodeTreeFils(path, fils):
     roottree = Node(ROOT)
     try:
         with open(path, 'r') as f:
@@ -103,18 +112,36 @@ def buildNodeTree(path):
             while line:
                 if 'createNode' == line[:10]:
                     (name, parentname, nodetype) = createNodeParser(line)
-                    Node.jointree(name, parentname, nodetype, roottree)
+                    if nodetype in fils:
+                        Node.jointree(name, parentname, nodetype, roottree)
                 line = f.readline()
     except IOError:
         raise u'Not allowed to write files to this path "%s".' % path
     return roottree
 
 
-def nodediff(patha, pathb):
+def nodediff(patha, pathb, diffonly=False, whitelist=['transform', 'mesh', 'nurbsSurface', 'nurbsCurve']):
     if not os.path.exists(patha):
         raise Exception(u'%s is not exists. exit.' % patha)
     if not os.path.exists(pathb):
         raise Exception(u'%s is not exists. exit.' % pathb)
 
-    treea = buildNodeTree(patha)
-    treeb = buildNodeTree(pathb)
+    treea = buildNodeTreeFils(patha, whitelist)
+    treeb = buildNodeTreeFils(pathb, whitelist)
+
+    d = Differ()
+    result = list(d.compare(treea.compareStr().split('\n'), treeb.compareStr().split('\n')))
+    if diffonly:
+        pprint(filter(lambda x:x[0]!=' ', result))
+    else:
+        pprint(result)
+
+
+if __name__ == '__main__':
+    patha = sys.argv[1]
+    pathb = sys.argv[2]
+    whitelist = sys.argv[3].split(',')
+    if len(sys.argv) is 5 and 'diffonly' == sys.argv[4]:
+        nodediff(patha, pathb, diffonly=True, whitelist=whitelist)
+    else:
+        nodediff(patha, pathb, diffonly=False, whitelist=whitelist)

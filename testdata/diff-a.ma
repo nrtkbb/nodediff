@@ -1,6 +1,6 @@
 //Maya ASCII 2015 scene
 //Name: diff-a.ma
-//Last modified: Tue, Mar 24, 2015 03:40:57 PM
+//Last modified: Tue, Mar 24, 2015 11:57:54 PM
 //Codeset: UTF-8
 requires maya "2015";
 currentUnit -l centimeter -a degree -t film;
@@ -142,6 +142,21 @@ createNode mesh -n "pPyramidShape1" -p "pPyramid1";
 	setAttr ".dcc" -type "string" "Ambient+Diffuse";
 	setAttr ".covm[0]"  0 1 1;
 	setAttr ".cdvm[0]"  0 1 1;
+createNode transform -n "nurbsSphere1";
+	setAttr ".t" -type "double3" -3.5276878757354542 2.5402704515239298 2.6100411208854526 ;
+createNode nurbsSurface -n "nurbsSphereShape1" -p "nurbsSphere1";
+	setAttr -k off ".v";
+	setAttr ".vir" yes;
+	setAttr ".vif" yes;
+	setAttr ".tw" yes;
+	setAttr ".covm[0]"  0 1 1;
+	setAttr ".cdvm[0]"  0 1 1;
+	setAttr ".dvu" 0;
+	setAttr ".dvv" 0;
+	setAttr ".cpr" 4;
+	setAttr ".cps" 4;
+	setAttr ".nufa" 4.5;
+	setAttr ".nvfa" 4.5;
 createNode lightLinker -s -n "lightLinker1";
 	setAttr -s 2 ".lnk";
 	setAttr -s 2 ".slnk";
@@ -223,6 +238,8 @@ createNode script -n "uiConfigurationScriptNode";
 createNode script -n "sceneConfigurationScriptNode";
 	setAttr ".b" -type "string" "playbackOptions -min 1 -max 120 -ast 1 -aet 200 ";
 	setAttr ".st" 6;
+createNode makeNurbSphere -n "makeNurbSphere1";
+	setAttr ".ax" -type "double3" 0 1 0 ;
 select -ne :time1;
 	setAttr ".o" 1;
 	setAttr ".unw" 1;
@@ -235,7 +252,7 @@ select -ne :postProcessList1;
 	setAttr -s 2 ".p";
 select -ne :defaultRenderingList1;
 select -ne :initialShadingGroup;
-	setAttr -s 4 ".dsm";
+	setAttr -s 5 ".dsm";
 	setAttr ".ro" yes;
 select -ne :initialParticleSE;
 	setAttr ".ro" yes;
@@ -254,6 +271,7 @@ select -ne :defaultHardwareRenderGlobals;
 connectAttr "polyPipe1.out" "pPipeShape1.i";
 connectAttr "makeNurbPlane1.os" "nurbsPlaneShape1.cr";
 connectAttr "polyPyramid1.out" "pPyramidShape1.i";
+connectAttr "makeNurbSphere1.os" "nurbsSphereShape1.cr";
 relationship "link" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
 relationship "link" ":lightLinker1" ":initialParticleSE.message" ":defaultLightSet.message";
 relationship "shadowLink" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
@@ -265,4 +283,5 @@ connectAttr "pPipeShape1.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "pPyramidShape1.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "nurbsPlaneShape1.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "nurbsPlaneShape2.iog" ":initialShadingGroup.dsm" -na;
+connectAttr "nurbsSphereShape1.iog" ":initialShadingGroup.dsm" -na;
 // End of diff-a.ma

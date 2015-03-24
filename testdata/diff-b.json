@@ -1,0 +1,296 @@
+{
+    "class": "Node",
+    "id": "@0x10B9961D0",
+    "name": "___root___",
+    "parent": "None",
+    "nodetype": "None",
+    "children": [
+    {
+        "class": "Node",
+        "id": "@0x10B9800D0",
+        "name": "persp",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B980150",
+            "name": "perspShape",
+            "parent": "persp",
+            "nodetype": "camera",
+            "children": []
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B980090",
+        "name": "top",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B980210",
+            "name": "topShape",
+            "parent": "top",
+            "nodetype": "camera",
+            "children": []
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B980110",
+        "name": "front",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B95C050",
+            "name": "frontShape",
+            "parent": "front",
+            "nodetype": "camera",
+            "children": []
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B95C090",
+        "name": "side",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B95C110",
+            "name": "sideShape",
+            "parent": "side",
+            "nodetype": "camera",
+            "children": []
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B95C0D0",
+        "name": "pPipe1",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B953A90",
+            "name": "pPipeShape1",
+            "parent": "pPipe1",
+            "nodetype": "mesh",
+            "children": []
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953B90",
+        "name": "nurbsPlane1",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B953A10",
+            "name": "nurbsPlaneShape1",
+            "parent": "nurbsPlane1",
+            "nodetype": "nurbsSurface",
+            "children": []
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953750",
+        "name": "group1",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B953F90",
+            "name": "nurbsPlane2",
+            "parent": "group1",
+            "nodetype": "transform",
+            "children": [
+            {
+                "class": "Node",
+                "id": "@0x10B953AD0",
+                "name": "nurbsPlaneShape2",
+                "parent": "nurbsPlane2",
+                "nodetype": "nurbsSurface",
+                "children": []
+            }]
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953990",
+        "name": "group3",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B953F50",
+            "name": "group2",
+            "parent": "group3",
+            "nodetype": "transform",
+            "children": [
+            {
+                "class": "Node",
+                "id": "@0x10B953A50",
+                "name": "pPyramid1",
+                "parent": "group2",
+                "nodetype": "transform",
+                "children": [
+                {
+                    "class": "Node",
+                    "id": "@0x10B9539D0",
+                    "name": "pPyramidShape1",
+                    "parent": "pPyramid1",
+                    "nodetype": "mesh",
+                    "children": []
+                }]
+            }]
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953E90",
+        "name": "locator1",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B953350",
+            "name": "locatorShape1",
+            "parent": "locator1",
+            "nodetype": "locator",
+            "children": []
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953890",
+        "name": "group5",
+        "parent": "___root___",
+        "nodetype": "transform",
+        "children": [
+        {
+            "class": "Node",
+            "id": "@0x10B953C90",
+            "name": "group4",
+            "parent": "group5",
+            "nodetype": "transform",
+            "children": [
+            {
+                "class": "Node",
+                "id": "@0x10B953C50",
+                "name": "group2",
+                "parent": "group4",
+                "nodetype": "transform",
+                "children": [
+                {
+                    "class": "Node",
+                    "id": "@0x10B9538D0",
+                    "name": "pPyramid1",
+                    "parent": "group2",
+                    "nodetype": "transform",
+                    "children": [
+                    {
+                        "class": "Node",
+                        "id": "@0x10B953F10",
+                        "name": "pPyramidShape1",
+                        "parent": "pPyramid1",
+                        "nodetype": "mesh",
+                        "children": []
+                    }]
+                }]
+            }]
+        }]
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953ED0",
+        "name": "lightLinker1",
+        "parent": "___root___",
+        "nodetype": "lightLinker",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B9532D0",
+        "name": "layerManager",
+        "parent": "___root___",
+        "nodetype": "displayLayerManager",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953810",
+        "name": "defaultLayer",
+        "parent": "___root___",
+        "nodetype": "displayLayer",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953790",
+        "name": "renderLayerManager",
+        "parent": "___root___",
+        "nodetype": "renderLayerManager",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953090",
+        "name": "defaultRenderLayer",
+        "parent": "___root___",
+        "nodetype": "renderLayer",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953FD0",
+        "name": "polyPipe1",
+        "parent": "___root___",
+        "nodetype": "polyPipe",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953D50",
+        "name": "polyPyramid1",
+        "parent": "___root___",
+        "nodetype": "polyPyramid",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953510",
+        "name": "makeNurbPlane1",
+        "parent": "___root___",
+        "nodetype": "makeNurbPlane",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953050",
+        "name": "uiConfigurationScriptNode",
+        "parent": "___root___",
+        "nodetype": "script",
+        "children": []
+    },
+    {
+        "class": "Node",
+        "id": "@0x10B953550",
+        "name": "sceneConfigurationScriptNode",
+        "parent": "___root___",
+        "nodetype": "script",
+        "children": []
+    }]
+}

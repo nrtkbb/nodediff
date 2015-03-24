@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 from itertools import ifilter
-from optparse import OptionParser
 
 
 ROOT='___root___'

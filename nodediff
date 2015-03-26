@@ -150,9 +150,9 @@ def nodediff(patha, pathb, diffonly=False, whitelist=[]):
     d = Differ()
     result = list(d.compare(comparelista, comparelistb))
     if diffonly:
-        pprint(filter(lambda x:x[0]!=' ', result))
+        print('\n'.join(filter(lambda x:x[0]!=' ', result)))
     else:
-        pprint(result)
+        print('\n'.join(result))
 
 
 if __name__ == '__main__':

@@ -21,23 +21,23 @@ version 0.0.1
 
 1. Print nodename and nodetype diff.
   ```shell
-  $ nodediff filea.ma fileb.ma
+  $ nodediff testdata/diff-a.ma testdata/diff-b.ma
   ```
 
 1. Print diff line only.
   ```shell
-  $ nodediff filea.ma fileb.ma -d
-  $ nodediff filea.ma fileb.ma --diffonly
+  $ nodediff testdata/diff-a.ma testdata/diff-b.ma -d
+  $ nodediff testdata/diff-a.ma testdata/diff-b.ma --diffonly
   ```
 
 1. Print transform diff.
   ```shell
-  $ nodediff filea.ma fileb.ma -w transform
-  $ nodediff filea.ma fileb.ma --whitelist transform
+  $ nodediff testdata/diff-a.ma testdata/diff-b.ma -w transform
+  $ nodediff testdata/diff-a.ma testdata/diff-b.ma --whitelist transform
   ```
 
 1. Print transfrom and mesh diff.  
   ```shell
-  $ nodediff filea.ma fileb.ma -w transform mesh
-  $ nodediff filea.ma fileb.ma --whitelist transform mesh
+  $ nodediff testdata/diff-a.ma testdata/diff-b.ma -w transform mesh
+  $ nodediff testdata/diff-a.ma testdata/diff-b.ma --whitelist transform mesh
   ```

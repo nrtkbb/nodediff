@@ -131,7 +131,7 @@ def nodefilter(lines, whitelist):
     return res
 
 
-def nodediff(patha, pathb, diffonly=False, whitelist=['transform', 'mesh', 'nurbsSurface', 'nurbsCurve']):
+def nodediff(patha, pathb, diffonly=False, whitelist=[]):
     if not os.path.exists(patha):
         raise Exception(u'%s is not exists. exit.' % patha)
     if not os.path.exists(pathb):
@@ -139,9 +139,13 @@ def nodediff(patha, pathb, diffonly=False, whitelist=['transform', 'mesh', 'nurb
 
     treea = buildNodeTreeFils(patha)
     treeb = buildNodeTreeFils(pathb)
-    whitelist = ['('+word+')' for word in whitelist]
-    comparelista = nodefilter(treea.compareStr().split('\n'), whitelist)
-    comparelistb = nodefilter(treeb.compareStr().split('\n'), whitelist)
+    if len(whitelist) > 0:
+        whitelist = ['('+word+')' for word in whitelist]
+        comparelista = nodefilter(treea.compareStr().split('\n'), whitelist)
+        comparelistb = nodefilter(treeb.compareStr().split('\n'), whitelist)
+    else:
+        comparelista = treea.compareStr().split('\n')
+        comparelistb = treeb.compareStr().split('\n')
 
     d = Differ()
     result = list(d.compare(comparelista, comparelistb))
@@ -164,7 +168,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-w', '--whitelist',
         nargs='*',
-        default=['transform', 'mesh', 'nurbsSurface', 'nurbsCurve']
+        default=[]
     )
     parser.add_argument('mayaAsciiPathA', type=str)
     parser.add_argument('mayaAsciiPathB', type=str)

@@ -4,6 +4,7 @@ import sys
 from itertools import ifilter
 from difflib import Differ
 from pprint import pprint
+from argparse import ArgumentParser
 
 
 ROOT='___root___'
@@ -150,10 +151,26 @@ def nodediff(patha, pathb, diffonly=False, whitelist=['transform', 'mesh', 'nurb
 
 
 if __name__ == '__main__':
-    patha = sys.argv[1]
-    pathb = sys.argv[2]
-    whitelist = sys.argv[3].split(',')
-    if len(sys.argv) is 5 and 'diffonly' == sys.argv[4]:
-        nodediff(patha, pathb, diffonly=True, whitelist=whitelist)
-    else:
-        nodediff(patha, pathb, diffonly=False, whitelist=whitelist)
+    parser = ArgumentParser(
+        prog=__name__,
+        description=u'This script require two maya ascii file (.ma). and print diff nodeName and nodeType.'
+    )
+    parser.add_argument(
+        '-d', '--diffonly',
+        default=False,
+        action='store_true'
+    )
+    parser.add_argument(
+        '-w', '--whitelist',
+        nargs='*',
+        default=['transform', 'mesh', 'nurbsSurface', 'nurbsCurve']
+    )
+    parser.add_argument('mayaAsciiPathA', type=str)
+    parser.add_argument('mayaAsciiPathB', type=str)
+    arg = parser.parse_args()
+    nodediff(
+        arg.mayaAsciiPathA,
+        arg.mayaAsciiPathB,
+        diffonly=arg.diffonly,
+        whitelist=arg.whitelist
+    )

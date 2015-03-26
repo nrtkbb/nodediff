@@ -104,7 +104,7 @@ def createNodeParser(line):
     return (name, parent, nodetype)
 
 
-def buildNodeTreeFils(path, fils):
+def buildNodeTreeFils(path):
     roottree = Node(ROOT)
     try:
         with open(path, 'r') as f:
@@ -112,12 +112,21 @@ def buildNodeTreeFils(path, fils):
             while line:
                 if 'createNode' == line[:10]:
                     (name, parentname, nodetype) = createNodeParser(line)
-                    if nodetype in fils:
-                        Node.jointree(name, parentname, nodetype, roottree)
+                    Node.jointree(name, parentname, nodetype, roottree)
                 line = f.readline()
     except IOError:
         raise u'Not allowed to write files to this path "%s".' % path
     return roottree
+
+
+def nodefilter(lines, whitelist):
+    res = []
+    for line in lines:
+        for whiteword in whitelist:
+            if line.find(whiteword) >= 0:
+                res.append(line)
+                break
+    return res
 
 
 def nodediff(patha, pathb, diffonly=False, whitelist=['transform', 'mesh', 'nurbsSurface', 'nurbsCurve']):
@@ -126,11 +135,14 @@ def nodediff(patha, pathb, diffonly=False, whitelist=['transform', 'mesh', 'nurb
     if not os.path.exists(pathb):
         raise Exception(u'%s is not exists. exit.' % pathb)
 
-    treea = buildNodeTreeFils(patha, whitelist)
-    treeb = buildNodeTreeFils(pathb, whitelist)
+    treea = buildNodeTreeFils(patha)
+    treeb = buildNodeTreeFils(pathb)
+    whitelist = ['('+word+')' for word in whitelist]
+    comparelista = nodefilter(treea.compareStr().split('\n'), whitelist)
+    comparelistb = nodefilter(treeb.compareStr().split('\n'), whitelist)
 
     d = Differ()
-    result = list(d.compare(treea.compareStr().split('\n'), treeb.compareStr().split('\n')))
+    result = list(d.compare(comparelista, comparelistb))
     if diffonly:
         pprint(filter(lambda x:x[0]!=' ', result))
     else:

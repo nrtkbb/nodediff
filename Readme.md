@@ -2,6 +2,13 @@
 
 version 0.0.1
 
+This is command line tool.
+Require two *.ma files arugument.
+
+    $ nodediff a.ma b.ma
+
+This tool parse node name and node type and hierarchy. and print different between two ".ma" files.
+
 ## How to install
 
 1. download python file.  

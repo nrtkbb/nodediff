@@ -131,14 +131,6 @@ def nodefilter(lines, whitelist):
     return res
 
 
-def removeRootAndIndent(lines):
-    res = []
-    for line in lines:
-        if not line.find(ROOT) >= 0:
-            res.append(line[4:])
-    return res
-
-
 def nodediff(patha, pathb, diffonly=False, whitelist=[]):
     if not os.path.exists(patha):
         raise Exception(u'%s is not exists. exit.' % patha)
@@ -155,8 +147,9 @@ def nodediff(patha, pathb, diffonly=False, whitelist=[]):
         comparelista = treea.compareStr().split('\n')
         comparelistb = treeb.compareStr().split('\n')
 
-    comparelista = removeRootAndIndent(comparelista)
-    comparelistb = removeRootAndIndent(comparelistb)
+    # remove ___root___(None) and indent.
+    comparelista = [line[4:] for line in comparelista[1:]]
+    comparelistb = [line[4:] for line in comparelistb[1:]]
 
     d = Differ()
     result = list(d.compare(comparelista, comparelistb))

@@ -89,8 +89,8 @@ This tool parse node name and node type and hierarchy. and print different betwe
 1. Print diff line only.
 
   ```shell
-  $ nodediff testdata/diff-a.ma testdata/diff-b.ma -d
-  $ nodediff testdata/diff-a.ma testdata/diff-b.ma --diffonly
+  $ nodediff -d testdata/diff-a.ma testdata/diff-b.ma
+  $ nodediff --diffonly testdata/diff-a.ma testdata/diff-b.ma
   ```
 
         + aa:group1(transform)
@@ -121,8 +121,8 @@ This tool parse node name and node type and hierarchy. and print different betwe
 1. Print transform diff.
 
   ```shell
-  $ nodediff testdata/diff-a.ma testdata/diff-b.ma -w transform
-  $ nodediff testdata/diff-a.ma testdata/diff-b.ma --whitelist transform
+  $ nodediff -w transform testdata/diff-a.ma testdata/diff-b.ma
+  $ nodediff --whitelist transform testdata/diff-a.ma testdata/diff-b.ma
   ```
 
         + aa:group1(transform)
@@ -153,8 +153,8 @@ This tool parse node name and node type and hierarchy. and print different betwe
 1. Print transfrom and mesh diff.  
 
   ```shell
-  $ nodediff testdata/diff-a.ma testdata/diff-b.ma -w transform mesh
-  $ nodediff testdata/diff-a.ma testdata/diff-b.ma --whitelist transform mesh
+  $ nodediff -w transform mesh testdata/diff-a.ma testdata/diff-b.ma
+  $ nodediff --whitelist transform mesh testdata/diff-a.ma testdata/diff-b.ma
   ```
 
         + aa:group1(transform)
@@ -190,8 +190,8 @@ This tool parse node name and node type and hierarchy. and print different betwe
 1. Print transfrom and mesh diff and diffonly.  
 
   ```shell
-  $ nodediff testdata/diff-a.ma testdata/diff-b.ma -d -w transform mesh
-  $ nodediff testdata/diff-a.ma testdata/diff-b.ma --diffonly --whitelist transform mesh
+  $ nodediff -d -w transform mesh testdata/diff-a.ma testdata/diff-b.ma
+  $ nodediff --diffonly --whitelist transform mesh testdata/diff-a.ma testdata/diff-b.ma
   ```
 
         + aa:group1(transform)

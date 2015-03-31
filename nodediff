@@ -5,7 +5,7 @@ import sys
 from itertools import ifilter
 from difflib import Differ
 from pprint import pprint
-from argparse import ArgumentParser
+from optparse import OptionParser
 
 
 ROOT='___root___'
@@ -131,7 +131,15 @@ def nodefilter(lines, whitelist):
     return res
 
 
-def nodediff(patha, pathb, diffonly=False, whitelist=[]):
+def whitelist_cleaner(whitelist):
+    if len(whitelist) is 0:
+        return []
+    if ',' in whitelist:
+        return whitelist.split(',')
+    return [whitelist]
+
+
+def nodediff(patha, pathb, diffonly=False, whitelist=''):
     if not os.path.exists(patha):
         raise Exception(u'%s is not exists. exit.' % patha)
     if not os.path.exists(pathb):
@@ -139,6 +147,8 @@ def nodediff(patha, pathb, diffonly=False, whitelist=[]):
 
     treea = buildNodeTreeFils(patha)
     treeb = buildNodeTreeFils(pathb)
+
+    whitelist = whitelist_cleaner(whitelist)
     if len(whitelist) > 0:
         whitelist = ['('+word+')' for word in whitelist]
         comparelista = nodefilter(treea.compareStr().split('\n'), whitelist)
@@ -160,26 +170,32 @@ def nodediff(patha, pathb, diffonly=False, whitelist=[]):
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(
+    parser = OptionParser(
         prog=__name__,
-        description=u'This script require two maya ascii file (.ma). and print diff nodeName and nodeType.'
+        description=u'This script require two maya ascii file (.ma). and print diff nodeName and nodeType.',
+        usage = u'Usage: $ nodediff [options] file-a.ma file-b.ma'
     )
-    parser.add_argument(
+    parser.add_option(
         '-d', '--diffonly',
-        default=False,
-        action='store_true'
+        action = 'store_true',
+        dest = 'diffonly',
+        default = False
     )
-    parser.add_argument(
+    parser.add_option(
         '-w', '--whitelist',
-        nargs='*',
-        default=[]
+        action = 'store',
+        type = 'string',
+        dest = 'whitelist',
+        default = '',
+        help = 'Whitelist nodeType(s). Multi specification ex) \'-w transform,mesh\''
     )
-    parser.add_argument('mayaAsciiPathA', type=str)
-    parser.add_argument('mayaAsciiPathB', type=str)
-    arg = parser.parse_args()
-    nodediff(
-        arg.mayaAsciiPathA,
-        arg.mayaAsciiPathB,
-        diffonly=arg.diffonly,
-        whitelist=arg.whitelist
-    )
+    try:
+        (option, args) = parser.parse_args()
+        nodediff(
+            args[0],
+            args[1],
+            diffonly=option.diffonly,
+            whitelist=option.whitelist
+        )
+    except:
+        parser.print_help()

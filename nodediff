@@ -30,6 +30,16 @@ class Node(object):
     def __str__(self):
         return self.dumps()
 
+    def __eq__(self, other):
+        """
+        name と nodetype が一致していれば同一とみなす
+        """
+        return (self.name     == other.name     and
+                self.nodetype == other.nodetype)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def dumps(self, indent='', end='}'):
         indent2 = indent + '    '
         res = '\n' + indent + '{\n' + indent2 + '"class": "%s",\n' % self.__class__.__name__

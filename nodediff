@@ -52,7 +52,6 @@ class Node(object):
             res += indent2 + '"children": []\n' + indent + end
         return res
 
-
     @staticmethod
     def jointree(name, parentname, nodetype, roottree):
         if '|' == parentname[0]:
@@ -81,7 +80,11 @@ class Node(object):
 
 
 def createNodeParser(line):
-    # line = 'createNode transform -n "hoge" -s -p "aa";\n'
+    """
+    'createNode nodetype -n "name" -s -p "parent";\n'
+    のような行を解析して、
+    (name, parent, nodetype)を返す
+    """
     tokens = line[:-2].split()
     nameflag = False
     parentflag = False
@@ -107,6 +110,9 @@ def createNodeParser(line):
 
 
 def buildNodeTreeFils(path):
+    """
+    maファイルを読み込み、Nodeクラスによるtreeを作成して返す
+    """
     roottree = Node(ROOT)
     try:
         with open(path, 'r') as f:
@@ -122,9 +128,19 @@ def buildNodeTreeFils(path):
 
 
 def nodefilter(lines, whitelist):
+    """
+    linesのうち、whitelistのどれかが含まれている行だけを返す
+    """
     res = []
     for line in lines:
+        """
+        すべての行を検査する
+        """
         for whiteword in whitelist:
+            """
+            whitelistに入っているどれかが含まれていれば
+            resに追加して次のlineへ検査を進める
+            """
             if line.find(whiteword) >= 0:
                 res.append(line)
                 break
@@ -132,6 +148,12 @@ def nodefilter(lines, whitelist):
 
 
 def whitelist_cleaner(whitelist):
+    """
+    -wの引数なし
+    -w hoge
+    -w hoge,hogehoge
+    という３パターンを考慮して、すべて配列にして返す
+    """
     if len(whitelist) is 0:
         return []
     if ',' in whitelist:

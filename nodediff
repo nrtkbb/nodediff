@@ -266,3 +266,5 @@ if __name__ == '__main__':
         )
     except:
         parser.print_help()
+        print ''
+        raise

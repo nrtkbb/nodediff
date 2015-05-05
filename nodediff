@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import threading
 from itertools import ifilter
 from pprint import pprint
 from optparse import OptionParser
@@ -123,11 +124,12 @@ def createNodeParser(line):
     return (name, parent, nodetype)
 
 
-def buildNodeTreeFils(path):
+def buildNodeTreeFils(path, roottree):
     """
-    maファイルを読み込み、Nodeクラスによるtreeを作成して返す
+    maファイルを読み込み、
+    createNodeの行をパースしてNodeクラスに変換しつつ、
+    ツリー構造を再現するオブジェクトを生成する。
     """
-    roottree = Node(ROOT)
     try:
         with open(path, 'r') as f:
             line = f.readline()
@@ -138,7 +140,6 @@ def buildNodeTreeFils(path):
                 line = f.readline()
     except IOError:
         raise u'Not allowed to write files to this path "%s".' % path
-    return roottree
 
 
 def nodefilter(lines, whitelist):
@@ -216,8 +217,16 @@ def nodediff(patha, pathb, diffonly=False, whitelist=''):
     if not os.path.exists(pathb):
         raise Exception(u'%s is not exists. exit.' % pathb)
 
-    treea = buildNodeTreeFils(patha)
-    treeb = buildNodeTreeFils(pathb)
+    threads = []
+    treea = Node(ROOT)
+    treeb = Node(ROOT)
+    for (path, tree) in ((patha, treea), (pathb, treeb)):
+        thread = threading.Thread(target=buildNodeTreeFils, args=(path, tree))
+        thread.start()
+        threads.append(thread)
+
+    for t in threads:
+        t.join()
 
     diffnode = DiffNode(ROOT)
     buildDiffNode(treea.children, treeb.children, diffnode)

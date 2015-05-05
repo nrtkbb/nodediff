@@ -27,9 +27,6 @@ class Node(object):
             res += child.compareStr(indent + '    ')
         return res
 
-    def __str__(self):
-        return self.dumps()
-
     def __eq__(self, other):
         """
         name と nodetype が一致していれば同一とみなす
@@ -39,28 +36,6 @@ class Node(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
-
-    def dumps(self, indent='', end='}'):
-        indent2 = indent + '    '
-        res = '\n' + indent + '{\n' + indent2 + '"class": "%s",\n' % self.__class__.__name__
-        res += indent2 + '"id": "@0x%X",\n' % id(self)
-        res += indent2 + '"name": "%s",\n' % self.name
-        if self.parent is None:
-            res += indent2 + '"parent": "%s",\n' % None
-        else:
-            res += indent2 + '"parent": "%s",\n' % self.parent.name
-        res += indent2 + '"nodetype": "%s",\n' % self.nodetype
-        if 0 < len(self.children):
-            res += indent2 + '"children": ['
-            for child in self.children:
-                if child is self.children[-1]:
-                    res += child.dumps(indent=indent2, end='}]')
-                else:
-                    res += child.dumps(indent=indent2, end='},')
-            res += '\n' + indent + end
-        else:
-            res += indent2 + '"children": []\n' + indent + end
-        return res
 
     @staticmethod
     def jointree(name, parentname, nodetype, roottree):

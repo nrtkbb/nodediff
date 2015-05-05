@@ -3,7 +3,6 @@
 import os
 import sys
 from itertools import ifilter
-from difflib import Differ
 from pprint import pprint
 from optparse import OptionParser
 
@@ -21,12 +20,6 @@ class Node(object):
 
     def addChild(self, child):
         self.children.append(child)
-
-    def compareStr(self, indent=''):
-        res = '{0}{1}({2})\n'.format(indent, self.name, self.nodetype)
-        for child in sorted(self.children, key=lambda n:n.name):
-            res += child.compareStr(indent + '    ')
-        return res
 
     def __eq__(self, other):
         """

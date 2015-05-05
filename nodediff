@@ -3,7 +3,6 @@
 import os
 import sys
 from itertools import ifilter
-from difflib import Differ
 from pprint import pprint
 from optparse import OptionParser
 
@@ -17,41 +16,23 @@ class Node(object):
         self.parent = parent
         self.nodetype = nodetype
         self.children = []
+        self.__hash = hash(name) + hash(nodetype)
 
     def addChild(self, child):
         self.children.append(child)
 
-    def compareStr(self, indent=''):
-        res = '{0}{1}({2})\n'.format(indent, self.name, self.nodetype)
-        for child in sorted(self.children, key=lambda n:n.name):
-            res += child.compareStr(indent + '    ')
-        return res
+    def __eq__(self, other):
+        """
+        name と nodetype が一致していれば同一とみなす
+        """
+        return (self.name     == other.name     and
+                self.nodetype == other.nodetype)
 
-    def __str__(self):
-        return self.dumps()
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
-    def dumps(self, indent='', end='}'):
-        indent2 = indent + '    '
-        res = '\n' + indent + '{\n' + indent2 + '"class": "%s",\n' % self.__class__.__name__
-        res += indent2 + '"id": "@0x%X",\n' % id(self)
-        res += indent2 + '"name": "%s",\n' % self.name
-        if self.parent is None:
-            res += indent2 + '"parent": "%s",\n' % None
-        else:
-            res += indent2 + '"parent": "%s",\n' % self.parent.name
-        res += indent2 + '"nodetype": "%s",\n' % self.nodetype
-        if 0 < len(self.children):
-            res += indent2 + '"children": ['
-            for child in self.children:
-                if child is self.children[-1]:
-                    res += child.dumps(indent=indent2, end='}]')
-                else:
-                    res += child.dumps(indent=indent2, end='},')
-            res += '\n' + indent + end
-        else:
-            res += indent2 + '"children": []\n' + indent + end
-        return res
-
+    def __hash__(self):
+        return self.__hash
 
     @staticmethod
     def jointree(name, parentname, nodetype, roottree):
@@ -80,8 +61,44 @@ class Node(object):
         tmptree.addChild(node)
 
 
+class DiffNode(object):
+
+    INTERSECT = 0
+    ADD       = 1
+    DELETE    = 2
+
+    def __init__(self, name, nodetype=None, difftype=INTERSECT):
+        self.name = name
+        self.nodetype = nodetype
+        self.difftype = difftype
+        self.children = []
+
+    def addChild(self, child):
+        self.children.append(child)
+
+    def compareStr(self, indent=''):
+        res = '{0}{1}{2}({3})\n'.format(self.compareMark(), indent, self.name, self.nodetype)
+        for child in sorted(self.children, key=lambda n:n.name):
+            res += child.compareStr(indent + '    ')
+        return res
+
+    def compareMark(self):
+        if self.difftype is DiffNode.INTERSECT:
+            return '  '
+        elif self.difftype is DiffNode.ADD:
+            return '+ '
+        elif self.difftype is DiffNode.DELETE:
+            return '- '
+        else:
+            raise Exception('DiffNode: Failed difftype for compareMark.')
+
+
 def createNodeParser(line):
-    # line = 'createNode transform -n "hoge" -s -p "aa";\n'
+    """
+    'createNode nodetype -n "name" -s -p "parent";\n'
+    のような行を解析して、
+    (name, parent, nodetype)を返す
+    """
     tokens = line[:-2].split()
     nameflag = False
     parentflag = False
@@ -107,6 +124,9 @@ def createNodeParser(line):
 
 
 def buildNodeTreeFils(path):
+    """
+    maファイルを読み込み、Nodeクラスによるtreeを作成して返す
+    """
     roottree = Node(ROOT)
     try:
         with open(path, 'r') as f:
@@ -122,9 +142,19 @@ def buildNodeTreeFils(path):
 
 
 def nodefilter(lines, whitelist):
+    """
+    linesのうち、whitelistのどれかが含まれている行だけを返す
+    """
     res = []
     for line in lines:
+        """
+        すべての行を検査する
+        """
         for whiteword in whitelist:
+            """
+            whitelistに入っているどれかが含まれていれば
+            resに追加して次のlineへ検査を進める
+            """
             if line.find(whiteword) >= 0:
                 res.append(line)
                 break
@@ -132,11 +162,52 @@ def nodefilter(lines, whitelist):
 
 
 def whitelist_cleaner(whitelist):
+    """
+    -wの引数なし
+    -w hoge
+    -w hoge,hogehoge
+    という３パターンを考慮して、すべて配列にして返す
+    """
     if len(whitelist) is 0:
         return []
     if ',' in whitelist:
         return whitelist.split(',')
     return [whitelist]
+
+
+def buildDiffNode(treea, treeb, diffnode):
+    seta = set(treea)
+    setb = set(treeb)
+    union = seta.union(setb)
+    intersect = seta.intersection(setb)
+    difference_a = seta.difference(setb)
+    difference_b = setb.difference(seta)
+    for node in sorted(union, key=lambda node: node.name):
+        if node in intersect:
+            newdiff = DiffNode(node.name, node.nodetype, DiffNode.INTERSECT)
+        elif node in difference_a:
+            newdiff = DiffNode(node.name, node.nodetype, DiffNode.DELETE)
+        elif node in difference_b:
+            newdiff = DiffNode(node.name, node.nodetype, DiffNode.ADD)
+        else:
+            raise Exception(u'buildDiffNode: Failed Node({}, {}, {})'.format(node.name, node.parent, node.nodetype))
+
+        a = filter(lambda x:x == node, seta)
+        b = filter(lambda x:x == node, setb)
+        if a:
+            seta.discard(a[0])
+            children_a = a[0].children
+        else:
+            children_a = []
+        if b:
+            setb.discard(b[0])
+            children_b = b[0].children
+        else:
+            children_b = []
+
+        diffnode.addChild(newdiff)
+
+        buildDiffNode(children_a, children_b, newdiff)
 
 
 def nodediff(patha, pathb, diffonly=False, whitelist=''):
@@ -148,25 +219,21 @@ def nodediff(patha, pathb, diffonly=False, whitelist=''):
     treea = buildNodeTreeFils(patha)
     treeb = buildNodeTreeFils(pathb)
 
+    diffnode = DiffNode(ROOT)
+    buildDiffNode(treea.children, treeb.children, diffnode)
+    result = []
+    [result.extend(child.compareStr().split('\n')) for child in diffnode.children]
+
+    result = filter(lambda x:len(x) != 0, result)
+
     whitelist = whitelist_cleaner(whitelist)
-    if len(whitelist) > 0:
-        whitelist = ['('+word+')' for word in whitelist]
-        comparelista = nodefilter(treea.compareStr().split('\n'), whitelist)
-        comparelistb = nodefilter(treeb.compareStr().split('\n'), whitelist)
-    else:
-        comparelista = treea.compareStr().split('\n')
-        comparelistb = treeb.compareStr().split('\n')
+    if whitelist:
+        result = nodefilter(result, whitelist)
 
-    # remove ___root___(None) and indent.
-    comparelista = [line[4:] for line in comparelista[1:]]
-    comparelistb = [line[4:] for line in comparelistb[1:]]
-
-    d = Differ()
-    result = list(d.compare(comparelista, comparelistb))
     if diffonly:
-        print('\n'.join(filter(lambda x:x[0]!=' ', result)))
+        print '\n'.join(filter(lambda x:x[0]!=' ', result))
     else:
-        print('\n'.join(result))
+        print '\n'.join(result)
 
 
 if __name__ == '__main__':
@@ -199,3 +266,5 @@ if __name__ == '__main__':
         )
     except:
         parser.print_help()
+        print ''
+        raise

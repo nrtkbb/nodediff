@@ -1,14 +1,14 @@
 //Maya ASCII 2015 scene
 //Name: diff-b.ma
-//Last modified: Tue, Mar 24, 2015 10:23:33 PM
+//Last modified: 月,  5 04, 2015 11:40:35 PM
 //Codeset: UTF-8
 requires maya "2015";
 currentUnit -l centimeter -a degree -t film;
 fileInfo "application" "maya";
 fileInfo "product" "Maya 2015";
 fileInfo "version" "2015";
-fileInfo "cutIdentifier" "201405190330-916664";
-fileInfo "osv" "Mac OS X 10.9.2";
+fileInfo "cutIdentifier" "201408201531-928694";
+fileInfo "osv" "Mac OS X 10.9.3";
 createNode transform -s -n "persp";
 	setAttr ".v" no;
 	setAttr ".t" -type "double3" 4.3340786354839995 4.7454094327589242 5.9711980111667753 ;
@@ -91,9 +91,9 @@ createNode nurbsSurface -n "nurbsPlaneShape1" -p "nurbsPlane1";
 	setAttr ".nufa" 4.5;
 	setAttr ".nvfa" 4.5;
 createNode transform -n "group1";
-createNode transform -n "nurbsPlane2" -p "group1";
+createNode transform -n "nurbsHogePlane2" -p "group1";
 	setAttr ".t" -type "double3" -1.5298085850731713 0.38187072147089651 1.7187438252137062 ;
-createNode nurbsSurface -n "nurbsPlaneShape2" -p "nurbsPlane2";
+createNode nurbsSurface -n "nurbsHogePlaneShape2" -p "nurbsHogePlane2";
 	setAttr -k off ".v";
 	setAttr ".vir" yes;
 	setAttr ".vif" yes;
@@ -390,7 +390,7 @@ connectAttr "pPipeShape1.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "|group3|group2|pPyramid1|pPyramidShape1.iog" ":initialShadingGroup.dsm"
 		 -na;
 connectAttr "nurbsPlaneShape1.iog" ":initialShadingGroup.dsm" -na;
-connectAttr "nurbsPlaneShape2.iog" ":initialShadingGroup.dsm" -na;
+connectAttr "nurbsHogePlaneShape2.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "|group5|group4|group2|pPyramid1|pPyramidShape1.iog" ":initialShadingGroup.dsm"
 		 -na;
 connectAttr "aa:pPipeShape1.iog" ":initialShadingGroup.dsm" -na;

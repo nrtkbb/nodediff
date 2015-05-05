@@ -1,6 +1,6 @@
 # nodediff
 
-version 0.0.1
+version 0.1.0
 
 This is command line tool.
 Require two *.ma files arugument.
@@ -51,8 +51,10 @@ This tool parse node name and node type and hierarchy. and print different betwe
           front(transform)
               frontShape(camera)
           group1(transform)
-              nurbsPlane2(transform)
-                  nurbsPlaneShape2(nurbsSurface)
+        +     nurbsHogePlane2(transform)
+        +         nurbsHogePlaneShape2(nurbsSurface)
+        -     nurbsPlane2(transform)
+        -         nurbsPlaneShape2(nurbsSurface)
           group3(transform)
               group2(transform)
                   pPyramid1(transform)
@@ -85,7 +87,7 @@ This tool parse node name and node type and hierarchy. and print different betwe
           top(transform)
               topShape(camera)
           uiConfigurationScriptNode(script)
-
+        
 1. Print diff line only.
 
   ```shell
@@ -107,6 +109,10 @@ This tool parse node name and node type and hierarchy. and print different betwe
         +     aa:pPipeShape1(mesh)
         + aa:polyPipe1(polyPipe)
         + aa:polyPyramid1(polyPyramid)
+        +     nurbsHogePlane2(transform)
+        +         nurbsHogePlaneShape2(nurbsSurface)
+        -     nurbsPlane2(transform)
+        -         nurbsPlaneShape2(nurbsSurface)
         + group5(transform)
         +     group4(transform)
         +         group2(transform)
@@ -134,7 +140,8 @@ This tool parse node name and node type and hierarchy. and print different betwe
         + aa:pPipe1(transform)
           front(transform)
           group1(transform)
-              nurbsPlane2(transform)
+        +     nurbsHogePlane2(transform)
+        -     nurbsPlane2(transform)
           group3(transform)
               group2(transform)
                   pPyramid1(transform)
@@ -168,7 +175,8 @@ This tool parse node name and node type and hierarchy. and print different betwe
         +     aa:pPipeShape1(mesh)
           front(transform)
           group1(transform)
-              nurbsPlane2(transform)
+        +     nurbsHogePlane2(transform)
+        -     nurbsPlane2(transform)
           group3(transform)
               group2(transform)
                   pPyramid1(transform)
@@ -203,6 +211,8 @@ This tool parse node name and node type and hierarchy. and print different betwe
         + aa:nurbsPlane1(transform)
         + aa:pPipe1(transform)
         +     aa:pPipeShape1(mesh)
+        +     nurbsHogePlane2(transform)
+        -     nurbsPlane2(transform)
         + group5(transform)
         +     group4(transform)
         +         group2(transform)
@@ -210,3 +220,4 @@ This tool parse node name and node type and hierarchy. and print different betwe
         +                 pPyramidShape1(mesh)
         + locator1(transform)
         - nurbsSphere1(transform)
+

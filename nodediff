@@ -182,36 +182,6 @@ def whitelist_cleaner(whitelist):
     return [whitelist]
 
 
-def nodediff(patha, pathb, diffonly=False, whitelist=''):
-    if not os.path.exists(patha):
-        raise Exception(u'%s is not exists. exit.' % patha)
-    if not os.path.exists(pathb):
-        raise Exception(u'%s is not exists. exit.' % pathb)
-
-    treea = buildNodeTreeFils(patha)
-    treeb = buildNodeTreeFils(pathb)
-
-    whitelist = whitelist_cleaner(whitelist)
-    if len(whitelist) > 0:
-        whitelist = ['('+word+')' for word in whitelist]
-        comparelista = nodefilter(treea.compareStr().split('\n'), whitelist)
-        comparelistb = nodefilter(treeb.compareStr().split('\n'), whitelist)
-    else:
-        comparelista = treea.compareStr().split('\n')
-        comparelistb = treeb.compareStr().split('\n')
-
-    # remove ___root___(None) and indent.
-    comparelista = [line[4:] for line in comparelista[1:]]
-    comparelistb = [line[4:] for line in comparelistb[1:]]
-
-    d = Differ()
-    result = list(d.compare(comparelista, comparelistb))
-    if diffonly:
-        print('\n'.join(filter(lambda x:x[0]!=' ', result)))
-    else:
-        print('\n'.join(result))
-
-
 def buildDiffNode(treea, treeb, diffnode):
     seta = set(treea)
     setb = set(treeb)
@@ -245,6 +215,32 @@ def buildDiffNode(treea, treeb, diffnode):
         diffnode.addChild(newdiff)
 
         buildDiffNode(children_a, children_b, newdiff)
+
+
+def nodediff(patha, pathb, diffonly=False, whitelist=''):
+    if not os.path.exists(patha):
+        raise Exception(u'%s is not exists. exit.' % patha)
+    if not os.path.exists(pathb):
+        raise Exception(u'%s is not exists. exit.' % pathb)
+
+    treea = buildNodeTreeFils(patha)
+    treeb = buildNodeTreeFils(pathb)
+
+    diffnode = DiffNode(ROOT)
+    buildDiffNode(treea.children, treeb.children, diffnode)
+    result = []
+    [result.extend(child.compareStr().split('\n')) for child in diffnode.children]
+
+    result = filter(lambda x:len(x) != 0, result)
+
+    whitelist = whitelist_cleaner(whitelist)
+    if whitelist:
+        result = nodefilter(result, whitelist)
+
+    if diffonly:
+        print '\n'.join(filter(lambda x:x[0]!=' ', result))
+    else:
+        print '\n'.join(result)
 
 
 if __name__ == '__main__':

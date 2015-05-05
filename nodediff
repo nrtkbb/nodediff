@@ -17,6 +17,7 @@ class Node(object):
         self.parent = parent
         self.nodetype = nodetype
         self.children = []
+        self.__hash = hash(name) + hash(nodetype)
 
     def addChild(self, child):
         self.children.append(child)
@@ -36,6 +37,9 @@ class Node(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __hash__(self):
+        return self.__hash
 
     @staticmethod
     def jointree(name, parentname, nodetype, roottree):
@@ -62,6 +66,38 @@ class Node(object):
             tmptree = next(ifilter(lambda x:x.name == parent, tmptree.children), None)
         node = Node(name, tmptree, nodetype)
         tmptree.addChild(node)
+
+
+class DiffNode(object):
+
+    INTERSECT = 0
+    ADD       = 1
+    DELETE    = 2
+
+    def __init__(self, name, nodetype=None, difftype=INTERSECT):
+        self.name = name
+        self.nodetype = nodetype
+        self.difftype = difftype
+        self.children = []
+
+    def addChild(self, child):
+        self.children.append(child)
+
+    def compareStr(self, indent=''):
+        res = '{0}{1}{2}({3})\n'.format(self.compareMark(), indent, self.name, self.nodetype)
+        for child in sorted(self.children, key=lambda n:n.name):
+            res += child.compareStr(indent + '    ')
+        return res
+
+    def compareMark(self):
+        if self.difftype is DiffNode.INTERSECT:
+            return '  '
+        elif self.difftype is DiffNode.ADD:
+            return '+ '
+        elif self.difftype is DiffNode.DELETE:
+            return '- '
+        else:
+            raise Exception('DiffNode: Failed difftype for compareMark.')
 
 
 def createNodeParser(line):
@@ -174,6 +210,41 @@ def nodediff(patha, pathb, diffonly=False, whitelist=''):
         print('\n'.join(filter(lambda x:x[0]!=' ', result)))
     else:
         print('\n'.join(result))
+
+
+def buildDiffNode(treea, treeb, diffnode):
+    seta = set(treea)
+    setb = set(treeb)
+    union = seta.union(setb)
+    intersect = seta.intersection(setb)
+    difference_a = seta.difference(setb)
+    difference_b = setb.difference(seta)
+    for node in sorted(union, key=lambda node: node.name):
+        if node in intersect:
+            newdiff = DiffNode(node.name, node.nodetype, DiffNode.INTERSECT)
+        elif node in difference_a:
+            newdiff = DiffNode(node.name, node.nodetype, DiffNode.DELETE)
+        elif node in difference_b:
+            newdiff = DiffNode(node.name, node.nodetype, DiffNode.ADD)
+        else:
+            raise Exception(u'buildDiffNode: Failed Node({}, {}, {})'.format(node.name, node.parent, node.nodetype))
+
+        a = filter(lambda x:x == node, seta)
+        b = filter(lambda x:x == node, setb)
+        if a:
+            seta.discard(a[0])
+            children_a = a[0].children
+        else:
+            children_a = []
+        if b:
+            setb.discard(b[0])
+            children_b = b[0].children
+        else:
+            children_b = []
+
+        diffnode.addChild(newdiff)
+
+        buildDiffNode(children_a, children_b, newdiff)
 
 
 if __name__ == '__main__':

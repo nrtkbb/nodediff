@@ -126,9 +126,10 @@ def createNodeParser(line):
 
 def buildNodeTreeFils(path, roottree):
     """
-    maファイルを読み込み、Nodeクラスによるtreeを作成して返す
+    maファイルを読み込み、
+    createNodeの行をパースしてNodeクラスに変換しつつ、
+    ツリー構造を再現するオブジェクトを生成する。
     """
-    roottree = Node(ROOT)
     try:
         with open(path, 'r') as f:
             line = f.readline()
